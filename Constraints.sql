@@ -84,11 +84,68 @@ CREATE TABLE foriegn_table (
 
 SELECT * FROM key_table;
 
+-- FOREIGN KEY 제약 조건이 적용된 컬럼에는 테이블의 컬럼에 값이 존재하지 않으면 삽입, 수정이 불가능
 INSERT INTO foriegn_table VALUES (1, 0);
 INSERT INTO foriegn_table VALUES (1, 1);
+UPDATE foriegn_table SET foriegn1 = 2 WHERE primary1 = 1;
 
-SELECT * FROM foriegn_table;
+-- FOREIGN KEY 제약조건으로 참조되어지고 있는 테이블의 레코드는 수정, 삭제가 불가능
 
+UPDATE key_table SET primary_column = 2 WHERE primary_column = 1;
 
+-- FOREIGN KEY 제약조건으로 참조되어지고 있는 테이블의 컬럼 변경 작업이 불가능
+DELETE FROM key_table WHERE primary_column = 1;
 
+DROP TABLE key_table;
 
+ALTER TABLE key_table
+MODIFY COLUMN primary_column VARCHAR(10);
+
+-- ON UPDATE / ON DELETE 옵션
+-- ON UPDATE: 참조하고 있는 테이블의 기본키가 변경될 때 동작
+-- ON DELETE: 참조하고 있는 테이블의 기본키가 삭제될 때 동작
+
+-- CASCADE: 참조되고 있는 테이블의 데이터가 삭제 또는 수정된다면, 참조하고 있는 테이블에서도 삭제 또는 수정이 같이 일어남
+-- SET NNULLL: 참조되고 있는 테이블의 데이터가 삭제 또는 수정된다면, 참조하고 있는 테이블의 데이터는 NULL로 지정됨
+-- RESTRICT: 참조되고 있는 테이블의 데이터의 삭제 또는 수정을 불가능하게 함
+CREATE TABLE optional_foreign_table (
+	primary_column INT PRIMARY KEY,
+    foreign_column INT,
+    FOREIGN KEY (foreign_column) REFERENCES key_table (primary_column)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL
+);
+
+INSERT INTO optional_foreign_table VALUES (1, 1);
+SELECT * FROM optional_foreign_table;  -- foriegn_table 에서는 옵션 안 걸어줘서 에러
+
+DROP TABLE foriegn_table; -- 에러 해결: DROP 하고 재실행
+
+UPDATE key_table SET primary_column = 2;
+SELECT * FROM key_table;
+SELECT * FROM optional_foreign_table;
+DELETE FROM key_table;
+SELECT * FROM key_table;
+
+-- CHECK 제약조건: 해당 컬럼에 값을 제한하는 제약
+CREATE TABLE check_table (
+	primary_column INT PRIMARY KEY,
+	check_column VARCHAR(5) CHECK(check_column IN ('남', '여'))
+);
+
+-- CHECK 제약조건이 걸린 컬럼에 조건에 해당하지 않는 값을 삽입, 수정할 수 없음
+INSERT INTO check_table VALUES (1, '남');
+INSERT INTO check_table VALUES (2, '남자');
+UPDATE check_table SET check_column = '여자';
+
+-- DEFAULT: 해당 컬럼에 삽입 시 값이 지정되지 않으면 기본값으로 지정하는 제약
+CREATE TABLE default_table (
+	-- AUTO_INCREMENT : 기본키가 정수형일 떄 기본키의 값을 1씩 증가하는 값으로 자동 지정
+	primary_column INT PRIMARY KEY AUTO_INCREMENT,
+    column1 INT,
+    default_column INT DEFAULT 10
+);
+
+INSERT INTO default_table (column1) VALUES (99);
+
+SELECT * FROM default_table;

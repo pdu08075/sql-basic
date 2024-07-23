@@ -67,5 +67,5 @@ UPDATE example_table A SET A.column1 = (
     FROM auto_table B
     WHERE B.idx = 1
 );
-
+	
 

@@ -48,7 +48,7 @@ INSERT INTO user(id, password, email) VALUES ('qwer1234', 'qwer1234', 'qwer1234@
 -- 게시물 리스트
 SELECT receipt_number, status, title, writer_id, write_date, view_count
 FROM board
-WHERE title LIKE '%세번%'
+WHERE title LIKE '%두%'
 ORDER BY receipt_number DESC
 LIMIT 0, 10;
 

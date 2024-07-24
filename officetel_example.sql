@@ -84,7 +84,7 @@ UPDATE board SET title = '게시물 수정', contents = '안녕하세요'
 WHERE receipt_number = 1;
 
 -- 게시물 삭제
-DELETE FROM board WHERE receipt_number = 1;
+DELETE FROM board WHERE receipt_number = 1; 
 
 
 
